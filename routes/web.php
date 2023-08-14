@@ -19,6 +19,10 @@ Route::get('/', [PageHomeController::class, 'index'])->name('index');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/product', [PageController::class, 'product'])->name('product');
+Route::get('/men-clothing', [PageController::class, 'product'])->name('men-product');
+Route::get('/women-clothing', [PageController::class, 'product'])->name('women-product');
+Route::get('/children-clothing', [PageController::class, 'product'])->name('chilren-product');
+Route::get('/sales', [PageController::class, 'saleproduct'])->name('sale-product');
 Route::get('/product/detail', [PageController::class, 'productdetail'])->name('productdetail');
 Route::get('/cart', [PageController::class, 'cart'])->name('cart');
 

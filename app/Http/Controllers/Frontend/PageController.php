@@ -19,6 +19,10 @@ class PageController extends Controller
         return view('frontend.pages.products');
     }
 
+    public function saleproduct(){
+        return view('frontend.pages.products');
+    }
+
     public function productdetail(){
         return view('frontend.pages.product');
     }
