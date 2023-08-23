@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SliderSeeder::class,
             CategorySeeder::class,
+            AboutSeeder::class,
         ]);
     }
 }
