@@ -36,7 +36,7 @@
   <script src="{{ asset('/') }}js/owl.carousel.min.js"></script>
   <script src="{{ asset('/') }}js/jquery.magnific-popup.min.js"></script>
   <script src="{{ asset('/') }}js/aos.js"></script>
-
+  @yield('customjs')
   <script src="{{ asset('/') }}js/main.js"></script>
 
   </body>

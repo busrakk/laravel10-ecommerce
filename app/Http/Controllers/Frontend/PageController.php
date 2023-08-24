@@ -6,6 +6,7 @@ use App\Models\About;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 
 class PageController extends Controller
 {
@@ -31,6 +32,7 @@ class PageController extends Controller
         $end_price = $request->end_price ?? null;
 
         $products = Product::where("status","1")
+        ->select(['id','name', 'slug', 'size', 'color', 'price', 'category_id', 'image'])
         ->where(function($q) use($size, $color, $start_price, $end_price){
             if(!empty($size)){
                 $q->where('size', $size);
@@ -43,8 +45,23 @@ class PageController extends Controller
             }
             return $q;
         })
-        ->paginate(1);
-        return view('frontend.pages.products', compact('products'));
+        ->with('category:id,name,slug');
+
+        // tablodaki min ve max fiyatı çekme
+        $minPrice = $products->min('price');
+        $maxPrice = $products->max('price');
+
+        $sizeLists = Product::where("status","1")->groupBy('size')->pluck('size')->toArray();
+
+        $colors = Product::where("status","1")->groupBy('color')->pluck('color')->toArray();
+
+        $products = $products->paginate(1);
+
+        // ilişki kurulduğu için with kullanıldı
+        // sasdece sayısını istersek withCount kullanılır
+        $categories = Category::where('status','1')->where('cat_ust', null)->withCount('items')->get();
+
+        return view('frontend.pages.products', compact('products','categories' , 'minPrice','maxPrice', 'sizeLists', 'colors'));
     }
 
     public function saleproduct(){
