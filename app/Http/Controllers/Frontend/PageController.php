@@ -18,8 +18,32 @@ class PageController extends Controller
         return view('frontend.pages.about', compact("about"));
     }
 
-    public function product(){
-        $products = Product::where("status","1")->paginate(1);
+    public function product(Request $request){
+        // if(!empty($request->size)){
+        //     $size = $request->size;
+        // }else{
+        //     $size = null;
+        // }
+
+        $size = $request->size ?? null;
+        $color = $request->color ?? null;
+        $start_price = $request->start_price ?? null;
+        $end_price = $request->end_price ?? null;
+
+        $products = Product::where("status","1")
+        ->where(function($q) use($size, $color, $start_price, $end_price){
+            if(!empty($size)){
+                $q->where('size', $size);
+            }
+            if(!empty($color)){
+                $q->where('color', $color);
+            }
+            if(!empty($start_price) && $end_price){
+                $q->where('price', [$start_price, $end_price]);
+            }
+            return $q;
+        })
+        ->paginate(1);
         return view('frontend.pages.products', compact('products'));
     }
 
