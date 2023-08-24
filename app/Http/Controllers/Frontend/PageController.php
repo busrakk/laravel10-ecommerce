@@ -19,7 +19,7 @@ class PageController extends Controller
     }
 
     public function product(){
-        $products = Product::where("status","1")->get();
+        $products = Product::where("status","1")->paginate(1);
         return view('frontend.pages.products', compact('products'));
     }
 
@@ -27,8 +27,10 @@ class PageController extends Controller
         return view('frontend.pages.products');
     }
 
-    public function productdetail(){
-        return view('frontend.pages.product');
+    public function productdetail($slug){
+        // $product = Product::whereSlug($slug)->first();
+        $product = Product::where("slug",$slug)->first();
+        return view('frontend.pages.product', compact('product'));
     }
 
     public function cart(){

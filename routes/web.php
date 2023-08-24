@@ -26,6 +26,6 @@ Route::group(['middleware' => 'sitesetting'], function(){
     Route::get('/women-clothing', [PageController::class, 'product'])->name('women-product');
     Route::get('/children-clothing', [PageController::class, 'product'])->name('chilren-product');
     Route::get('/sales', [PageController::class, 'saleproduct'])->name('sale-product');
-    Route::get('/product/detail', [PageController::class, 'productdetail'])->name('productdetail');
+    Route::get('/product/{slug}', [PageController::class, 'productdetail'])->name('productdetail');
     Route::get('/cart', [PageController::class, 'cart'])->name('cart');
 });
