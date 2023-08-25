@@ -55,7 +55,7 @@
       <div class="container">
         <div class="row">
           <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
-            <a class="block-2-item" href="{{ route('women-product') }}">
+            <a class="block-2-item" href="{{ route('womenproduct') }}">
               <figure class="image">
                 <img src="images/women.jpg" alt="" class="img-fluid">
               </figure>
@@ -66,7 +66,7 @@
             </a>
           </div>
           <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="100">
-            <a class="block-2-item" href="{{ route('chilren-product') }}">
+            <a class="block-2-item" href="{{ route('childrenproduct') }}">
               <figure class="image">
                 <img src="images/children.jpg" alt="" class="img-fluid">
               </figure>
@@ -77,7 +77,7 @@
             </a>
           </div>
           <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="200">
-            <a class="block-2-item" href="{{ route('men-product') }}">
+            <a class="block-2-item" href="{{ route('menproduct') }}">
               <figure class="image">
                 <img src="images/men.jpg" alt="" class="img-fluid">
               </figure>

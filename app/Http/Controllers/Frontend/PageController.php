@@ -26,13 +26,19 @@ class PageController extends Controller
         //     $size = null;
         // }
 
+        // url'deki parametre sorguları
+        // /products?size=LARGE&color=Black&page=2
         $size = $request->size ?? null;
         $color = $request->color ?? null;
         $start_price = $request->start_price ?? null;
         $end_price = $request->end_price ?? null;
 
+        $order = $request->order ?? 'id';
+        $sort = $request->sort ?? 'desc';
+
         $products = Product::where("status","1")
         ->select(['id','name', 'slug', 'size', 'color', 'price', 'category_id', 'image'])
+        // filtreleme
         ->where(function($q) use($size, $color, $start_price, $end_price){
             if(!empty($size)){
                 $q->where('size', $size);
@@ -55,7 +61,7 @@ class PageController extends Controller
 
         $colors = Product::where("status","1")->groupBy('color')->pluck('color')->toArray();
 
-        $products = $products->paginate(1);
+        $products = $products->orderBy($order, $sort)->paginate(1);
 
         // ilişki kurulduğu için with kullanıldı
         // sasdece sayısını istersek withCount kullanılır

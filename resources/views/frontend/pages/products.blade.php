@@ -40,12 +40,11 @@
                                     <button type="button" class="btn btn-secondary btn-sm dropdown-toggle"
                                         id="dropdownMenuReference" data-toggle="dropdown">Reference</button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                                        <a class="dropdown-item" href="#">Relevance</a>
-                                        <a class="dropdown-item" href="#">Name, A to Z</a>
-                                        <a class="dropdown-item" href="#">Name, Z to A</a>
+                                        <a class="dropdown-item" href="#" data-sira="a_z_order">Name, A to Z</a>
+                                        <a class="dropdown-item" href="#" data-sira="z_a_order">Name, Z to A</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">Price, low to high</a>
-                                        <a class="dropdown-item" href="#">Price, high to low</a>
+                                        <a class="dropdown-item" href="#" data-sira="price_min_order">Price, low to high</a>
+                                        <a class="dropdown-item" href="#" data-sira="price_max_order">Price, high to low</a>
                                     </div>
                                 </div>
                             </div>
@@ -79,6 +78,7 @@
 
                     </div>
 
+                    {{-- "withQueryString()" tüm sayfalarda mevcut filtrelemeyi kullanmak için  --}}
                     <div class="row" data-aos="fade-up">
                         {{ $products->withQueryString()->links('vendor.pagination.custom') }}
                         {{-- <div class="col-md-12 text-center">
@@ -155,39 +155,22 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
-                                <a class="block-2-item" href="#">
-                                    <figure class="image">
-                                        <img src="images/women.jpg" alt="" class="img-fluid">
-                                    </figure>
-                                    <div class="text">
-                                        <span class="text-uppercase">Collections</span>
-                                        <h3>Women</h3>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="100">
-                                <a class="block-2-item" href="#">
-                                    <figure class="image">
-                                        <img src="images/children.jpg" alt="" class="img-fluid">
-                                    </figure>
-                                    <div class="text">
-                                        <span class="text-uppercase">Collections</span>
-                                        <h3>Children</h3>
-                                    </div>
-                                </a>
-                            </div>
-                            <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="200">
-                                <a class="block-2-item" href="#">
-                                    <figure class="image">
-                                        <img src="images/men.jpg" alt="" class="img-fluid">
-                                    </figure>
-                                    <div class="text">
-                                        <span class="text-uppercase">Collections</span>
-                                        <h3>Men</h3>
-                                    </div>
-                                </a>
-                            </div>
+                            @if (!empty($categories))
+                                @foreach ($categories as $category)
+                                <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
+                                    <a class="block-2-item" href="{{ route($category->slug.'product') }}">
+                                        <figure class="image">
+                                            <img src="{{ asset($category->image) }}" alt="" class="img-fluid">
+                                        </figure>
+                                        <div class="text">
+                                            <span class="text-uppercase">Collections</span>
+                                            <h3>{{ $category->name }}</h3>
+                                        </div>
+                                    </a>
+                                </div>
+                                @endforeach
+                            @endif
+
                         </div>
 
                     </div>

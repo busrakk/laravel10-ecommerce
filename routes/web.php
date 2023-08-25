@@ -22,9 +22,9 @@ Route::group(['middleware' => 'sitesetting'], function(){
     Route::get('/contact', [PageController::class, 'contact'])->name('contact');
     Route::post('/contact/save', [AjaxController::class, 'contactsave'])->name('contact.save');
     Route::get('/product', [PageController::class, 'product'])->name('product');
-    Route::get('/men-clothing', [PageController::class, 'product'])->name('men-product');
-    Route::get('/women-clothing', [PageController::class, 'product'])->name('women-product');
-    Route::get('/children-clothing', [PageController::class, 'product'])->name('chilren-product');
+    Route::get('/men/{slug?}', [PageController::class, 'product'])->name('menproduct');
+    Route::get('/women/{slug?}', [PageController::class, 'product'])->name('womenproduct');
+    Route::get('/children/{slug?}', [PageController::class, 'product'])->name('childrenproduct');
     Route::get('/sales', [PageController::class, 'saleproduct'])->name('sale-product');
     Route::get('/product/{slug}', [PageController::class, 'productdetail'])->name('productdetail');
     Route::get('/cart', [PageController::class, 'cart'])->name('cart');
