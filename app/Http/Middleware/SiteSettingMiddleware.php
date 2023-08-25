@@ -20,7 +20,15 @@ class SiteSettingMiddleware
         // key - value şeklinde array oluşturur
         $settings = SiteSetting::pluck('data','name')->toArray();
         $categories = Category::where('status', '1')->with('subCategory')->withCount('items')->get();
-        view()->share(['settings'=>$settings, 'categories'=>$categories]);
+
+        $countQty = 0;
+        $cartItem = session('cart', []);
+
+        foreach($cartItem as $cart){
+            $countQty += $cart['qty'];
+        }
+
+        view()->share(['settings'=>$settings, 'categories'=>$categories, 'countQty'=>$countQty]);
 
         return $next($request);
     }

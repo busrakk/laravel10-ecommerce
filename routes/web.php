@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\PageHomeController;
 use Illuminate\Support\Facades\Route;
@@ -27,5 +28,7 @@ Route::group(['middleware' => 'sitesetting'], function(){
     Route::get('/children/{slug?}', [PageController::class, 'product'])->name('childrenproduct');
     Route::get('/sales', [PageController::class, 'saleproduct'])->name('sale-product');
     Route::get('/product/{slug}', [PageController::class, 'productdetail'])->name('productdetail');
-    Route::get('/cart', [PageController::class, 'cart'])->name('cart');
+    Route::get('/cart', [CartController::class, 'index'])->name('cart');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cartadd');
+    Route::post('/cart/remove', [CartController::class, 'remove'])->name('cartremove');
 });

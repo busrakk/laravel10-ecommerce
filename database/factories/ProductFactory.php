@@ -17,7 +17,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         $categoryId = [1,2,3,4,5,6,7,8,9];
-        $sizeList = ['XS','X','M','L','XL'];
+        $sizeList = ['XS','S','M','L','XL'];
         $color = ['White','Red','Green','Blue'];
 
         $colorText = $color[random_int(0,3)];
