@@ -30,7 +30,7 @@
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
                                         @if (!empty($categories) && $categories->count() > 0)
-                                            @foreach ($categories as $category)
+                                            @foreach ($categories->where('cat_ust', null) as $category)
                                                 <a class="dropdown-item" href="#">{{ $category->name }}</a>
                                             @endforeach
                                         @endif
@@ -43,8 +43,10 @@
                                         <a class="dropdown-item" href="#" data-sira="a_z_order">Name, A to Z</a>
                                         <a class="dropdown-item" href="#" data-sira="z_a_order">Name, Z to A</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#" data-sira="price_min_order">Price, low to high</a>
-                                        <a class="dropdown-item" href="#" data-sira="price_max_order">Price, high to low</a>
+                                        <a class="dropdown-item" href="#" data-sira="price_min_order">Price, low to
+                                            high</a>
+                                        <a class="dropdown-item" href="#" data-sira="price_max_order">Price, high to
+                                            low</a>
                                     </div>
                                 </div>
                             </div>
@@ -102,8 +104,8 @@
                         <h3 class="mb-3 h6 text-uppercase text-black d-block">Categories</h3>
                         <ul class="list-unstyled mb-0">
                             @if (!empty($categories) && $categories->count() > 0)
-                                @foreach ($categories as $category)
-                                    <li class="mb-1"><a href="#" class="d-flex"><span>{{ $category->name }}</span>
+                                @foreach ($categories->where('cat_ust', null) as $category)
+                                    <li class="mb-1"><a href="{{ route($category->slug.'product') }}" class="d-flex"><span>{{ $category->name }}</span>
                                             <span class="text-black ml-auto">({{ $category->items_count }})</span></a></li>
                                 @endforeach
                             @endif
@@ -156,18 +158,25 @@
                         </div>
                         <div class="row">
                             @if (!empty($categories))
-                                @foreach ($categories as $category)
-                                <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
-                                    <a class="block-2-item" href="{{ route($category->slug.'product') }}">
-                                        <figure class="image">
-                                            <img src="{{ asset($category->image) }}" alt="" class="img-fluid">
-                                        </figure>
-                                        <div class="text">
-                                            <span class="text-uppercase">Collections</span>
-                                            <h3>{{ $category->name }}</h3>
-                                        </div>
-                                    </a>
-                                </div>
+                                {{-- collect: dizi oluştur --}}
+                                {{-- @php
+                                    $allcategories = collect($categories);
+                                @endphp --}}
+                                {{-- @foreach ($allcategories->where('cat_ust', null) as $category) --}}
+                                @foreach ($categories->where('cat_ust', null) as $category)
+                                    <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade"
+                                        data-aos-delay="">
+                                        <a class="block-2-item" href="{{ route($category->slug . 'product') }}">
+                                            <figure class="image">
+                                                <img src="{{ asset($category->image) }}" alt=""
+                                                    class="img-fluid">
+                                            </figure>
+                                            <div class="text">
+                                                <span class="text-uppercase">Collections</span>
+                                                <h3>{{ $category->name }}</h3>
+                                            </div>
+                                        </a>
+                                    </div>
                                 @endforeach
                             @endif
 

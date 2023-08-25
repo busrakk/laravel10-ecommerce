@@ -19,7 +19,10 @@ class PageController extends Controller
         return view('frontend.pages.about', compact("about"));
     }
 
-    public function product(Request $request){
+    public function product(Request $request, $slug=null){
+        // URL'nin ilk parçasına erişebilmeyi sağlsar.
+        $category = request()->segment(1) ?? null;
+
         // if(!empty($request->size)){
         //     $size = $request->size;
         // }else{
@@ -51,7 +54,16 @@ class PageController extends Controller
             }
             return $q;
         })
-        ->with('category:id,name,slug');
+        // with('category:id,name,slug') ile ilişkilendirilmiş kategorileri önceden yüklemiş oluyoruz
+        // whereHas('category', ...) ile belirli bir kritere uyan gönderileri alıyoruz
+        // whereHas ilişki tablosunda sorgu yapmada kullanılır
+        ->with('category:id,name,slug')
+        ->whereHas('category', function($q) use ($category, $slug){
+            if(!empty($slug)){
+                $q->where('slug', $slug);
+            }
+            return $q;
+        });
 
         // tablodaki min ve max fiyatı çekme
         $minPrice = $products->min('price');
@@ -65,9 +77,9 @@ class PageController extends Controller
 
         // ilişki kurulduğu için with kullanıldı
         // sasdece sayısını istersek withCount kullanılır
-        $categories = Category::where('status','1')->where('cat_ust', null)->withCount('items')->get();
+        // $categories = Category::where('status','1')->where('cat_ust', null)->withCount('items')->get();
 
-        return view('frontend.pages.products', compact('products','categories' , 'minPrice','maxPrice', 'sizeLists', 'colors'));
+        return view('frontend.pages.products', compact('products' , 'minPrice','maxPrice', 'sizeLists', 'colors'));
     }
 
     public function saleproduct(){
@@ -76,8 +88,15 @@ class PageController extends Controller
 
     public function productdetail($slug){
         // $product = Product::whereSlug($slug)->first();
-        $product = Product::where("slug",$slug)->first();
-        return view('frontend.pages.product', compact('product'));
+        $product = Product::where("slug",$slug)->where('status', '1')->firstOrFail();
+
+        $products = Product::where('id', '!=', $product->id)
+        ->where('category_id', $product->category_id) // ürünün kategorisiyle aynı olan ürünleri getir
+        ->where('status', '1')
+        ->limit('6')
+        ->get();
+
+        return view('frontend.pages.product', compact('product', 'products'));
     }
 
     public function cart(){
