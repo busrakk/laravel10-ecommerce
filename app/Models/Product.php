@@ -8,7 +8,7 @@ use Cviebrock\EloquentSluggable\Sluggable;
 
 class Product extends Model
 {
-    use Sluggable;
+    use Sluggable, HasFactory;
     protected $fillable = [
         'name',
         'slug',

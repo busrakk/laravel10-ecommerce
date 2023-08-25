@@ -73,7 +73,7 @@ class PageController extends Controller
 
         $colors = Product::where("status","1")->groupBy('color')->pluck('color')->toArray();
 
-        $products = $products->orderBy($order, $sort)->paginate(1);
+        $products = $products->orderBy($order, $sort)->paginate(20);
 
         // ilişki kurulduğu için with kullanıldı
         // sasdece sayısını istersek withCount kullanılır
