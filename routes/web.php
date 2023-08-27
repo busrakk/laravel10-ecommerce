@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\PageHomeController;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,4 +32,11 @@ Route::group(['middleware' => 'sitesetting'], function(){
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cartadd');
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cartremove');
+
+    Auth::routes();
+    Route::get('logout', [AjaxController::class, 'logout'])->name('logout');
 });
+
+
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

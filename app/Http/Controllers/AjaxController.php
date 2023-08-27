@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ContentFormRequest;
 use App\Models\Contact;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ContentFormRequest;
 
 class AjaxController extends Controller
 {
@@ -46,5 +47,10 @@ class AjaxController extends Controller
         //     'message' => 'Successfully sent',
         //     //'errors' => $validationData,
         // ]);
+    }
+
+    public function logout(){
+        Auth::logout();
+        return redirect()->route('index');
     }
 }
