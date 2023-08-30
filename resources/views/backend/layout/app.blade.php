@@ -252,6 +252,7 @@
     <!-- Custom js for this page-->
     <script src="{{ asset('backend') }}/js/dashboard.js"></script>
     <script src="{{ asset('backend') }}/js/Chart.roundedBarCharts.js"></script>
+    <script src="{{ asset('backend') }}/js/file-upload.js"></script>
     <!-- End custom js for this page-->
 </body>
 
