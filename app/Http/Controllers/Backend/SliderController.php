@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use ImageResize;
 use App\Http\Requests\SliderRequest;
+use Illuminate\Http\Request;
 
 class SliderController extends Controller
 {
@@ -16,7 +17,7 @@ class SliderController extends Controller
     }
 
     public function create(){
-        return view('backend.pages.slider.create');
+        return view('backend.pages.slider.edit');
     }
 
     public function edit($id){
@@ -34,14 +35,16 @@ class SliderController extends Controller
         if ($request->hasFile('image')) {
             $img = $request->file('image');
             $extension = $img->getClientOriginalExtension();
-            $folderName = time() . '-' . Str::slug($request->name);
-            //$uploadFolder = 'img/slider/';
+            $folderName = time().'-'.Str::slug($request->name);
+            // $uploadFolder = 'img/slider/';
 
-            if (in_array($extension, ['pdf', 'svg', 'webp'])) { // Dosya uzantısına göre işlemler
-                $img->move(public_path($uploadFolder), $folderName . '.' . $extension);
+            if (in_array($extension, ['pdf', 'svg', 'webp', 'jiff'])) { // Dosya uzantısına göre işlemler
+                $img->move(public_path($uploadFolder), $folderName.'.'.$extension);
+                $imgurl = $uploadFolder.$folderName.'.'.$extension;
             } else {
                 $img = ImageResize::make($img);
-                $img->encode('webp', 75)->save(public_path($uploadFolder . $folderName . '.webp'));
+                $img->encode('webp', 75)->save($uploadFolder.$folderName.'.webp');
+                $imgurl = $uploadFolder.$folderName.'.webp';
             }
         }
 
@@ -50,10 +53,52 @@ class SliderController extends Controller
             'content' => $request->content,
             'link' => $request->link,
             'status' => $request->status,
-            'image' => $folderName ?? NULL,
+            'image' => $imgurl ?? NULL,
         ]);
 
         return back()->withSuccess('Slider created successfully');
         // return $request->all();
+    }
+
+    public function update(Request $request, $id){
+        $uploadFolder = 'img/slider/';
+        if ($request->hasFile('image')) {
+            $img = $request->file('image');
+            $extension = $img->getClientOriginalExtension();
+            $folderName = time().'-'.Str::slug($request->name);
+
+            if (in_array($extension, ['pdf', 'svg', 'webp', 'jiff'])) { // Dosya uzantısına göre işlemler
+                $img->move(public_path($uploadFolder), $folderName.'.'.$extension);
+                $imgurl = $uploadFolder.$folderName.'.'.$extension;
+            } else {
+                $img = ImageResize::make($img);
+                $img->encode('webp', 75)->save($uploadFolder.$folderName.'.webp');
+                $imgurl = $uploadFolder.$folderName.'.webp';
+            }
+        }
+
+        Slider::where('id', $id)->update([
+            'name' => $request->name,
+            'content' => $request->content,
+            'link' => $request->link,
+            'status' => $request->status,
+            'image' => $imgurl ?? NULL,
+        ]);
+
+        return back()->withSuccess('Slider updated successfully');
+        // return $request->all();
+    }
+
+    public function destroy($id){
+        $slider = Slider::where('id', $id)->firstOrFail();
+
+        if(file_exists($slider->image)){
+            if(!empty($slider->image)){
+                unlink($slider->image); // resmi sil
+            }
+        }
+
+        $slider->delete();
+        return back()->withSuccess('Slider deleted successfully');
     }
 }
