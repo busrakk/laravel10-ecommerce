@@ -89,8 +89,8 @@ class SliderController extends Controller
         // return $request->all();
     }
 
-    public function destroy($id){
-        $slider = Slider::where('id', $id)->firstOrFail();
+    public function destroy(Request $request){
+        $slider = Slider::where('id', $request->id)->firstOrFail();
 
         if(file_exists($slider->image)){
             if(!empty($slider->image)){
@@ -99,7 +99,7 @@ class SliderController extends Controller
         }
 
         $slider->delete();
-        return back()->withSuccess('Slider deleted successfully');
+        return response(['error'=>false, 'message'=>'Slider deleted successfully']);
     }
 
     public function status(Request $request){

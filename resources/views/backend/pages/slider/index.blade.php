@@ -31,7 +31,7 @@
                             <tbody>
                                 @if (!empty($sliders) && $sliders->count() > 0)
                                     @foreach ($sliders as $slider)
-                                        <tr>
+                                        <tr class="item" item-id="{{ $slider->id }}">
                                             <td class="py-1">
                                                 <img src="{{ asset($slider->image) }}" alt="{{ $slider->name }}" />
                                             </td>
@@ -43,7 +43,7 @@
                                                     class="badge badge-{{ $slider->status == '1' ? 'success' : 'danger' }}">
                                                     {{ $slider->status == '1' ? 'Active' : 'Passive' }}
                                                 </label> --}}
-                                                <div class="checkbox" item-id="{{ $slider->id }}">
+                                                <div class="checkbox">
                                                     <label>
                                                         <input type="checkbox" class="durum" data-on="Active"
                                                             data-off="Passive" data-onstyle="success" data-offstyle="danger"
@@ -56,12 +56,14 @@
                                                 <a href="{{ route('panel.slider.edit', $slider->id) }}"
                                                     class="btn btn-primary mr-2">Edit
                                                 </a>
-                                                <form action="{{ route('panel.slider.destroy', $slider->id) }}"
+                                                {{-- <form action="{{ route('panel.slider.destroy', $slider->id) }}"
                                                     method="POST">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Delete</button>
-                                                </form>
+                                                </form> --}}
+
+                                                <button type="button" class="deleteBtn btn btn-danger">Delete</button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -81,7 +83,7 @@
         // buton olsaydı click kullanılması gerekiyordu
         $(document).on('change', '.durum', function(e) {
             // alert('test')
-            id = $(this).closest('.checkbox').attr('item-id');
+            id = $(this).closest('.item').attr('item-id');
             statu = $(this).prop('checked');
             $.ajax({
                 headers: {
@@ -101,6 +103,38 @@
                     }
                 }
             });
+        });
+
+        $(document).on('click', '.deleteBtn', function(e) {
+            e.preventDefault();
+            var item = $(this).closest('.item');
+            id = item.attr('item-id');
+
+            alertify.confirm("Are you sure?", "You won't be able to revert this!",
+                function() {
+
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        type: "DELETE",
+                        url: "{{ route('panel.slider.destroy') }}",
+                        data: {
+                            id: id,
+                        },
+                        success: function(response) {
+                            if (response.error == false) {
+                                item.remove();
+                                alertify.success(response.message)
+                            } else {
+                                alertify.error("Something went wrong");
+                            }
+                        }
+                    });
+                },
+                function() {
+                    alertify.error('Deletion canceled.');
+                });
         });
     </script>
 @endsection

@@ -13,6 +13,6 @@ Route::group(['middleware' => ['panelsetting', 'auth'], 'prefix'=>'panel', 'as'=
     Route::get('/slider/{id}/edit', [SliderController::class, 'edit'])->name('slider.edit');
     Route::post('/slider/store', [SliderController::class, 'store'])->name('slider.store');
     Route::put('/slider/{id}/update', [SliderController::class, 'update'])->name('slider.update');
-    Route::delete('/slider/{id}/destroy', [SliderController::class, 'destroy'])->name('slider.destroy');
+    Route::delete('/slider/destroy', [SliderController::class, 'destroy'])->name('slider.destroy');
     Route::post('/slider-status/update', [SliderController::class, 'status'])->name('slider.status');
 });
