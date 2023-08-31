@@ -101,4 +101,11 @@ class SliderController extends Controller
         $slider->delete();
         return back()->withSuccess('Slider deleted successfully');
     }
+
+    public function status(Request $request){
+        $update = $request->statu;
+        $updateCheck = $update == "false" ? '0' : '1';
+        Slider::where('id', $request->id)->update(['status' => $updateCheck]);
+        return response(['error'=>false, 'status'=>$update]); // ajax kullanıldığı için response kullanıldı.
+    }
 }

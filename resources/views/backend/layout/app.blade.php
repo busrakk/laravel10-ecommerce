@@ -18,8 +18,14 @@
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{ asset('backend') }}/css/vertical-layout-light/style.css">
+
+    <link href="{{ asset('backend') }}/css/bootstrap-toggle.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ asset('backend') }}/css/alertify.min.css" />
+    <link rel="stylesheet" href="{{ asset('backend') }}/css/alertify-bootstrap.min.css" />
     <!-- endinject -->
     <link rel="shortcut icon" href="images/favicon.png" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -233,6 +239,8 @@
     <!-- container-scroller -->
 
     <!-- plugins:js -->
+    <script src="{{ asset('backend') }}/js/jquery.min.js"></script>
+
     <script src="{{ asset('backend') }}/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->
@@ -253,6 +261,12 @@
     <script src="{{ asset('backend') }}/js/dashboard.js"></script>
     <script src="{{ asset('backend') }}/js/Chart.roundedBarCharts.js"></script>
     <script src="{{ asset('backend') }}/js/file-upload.js"></script>
+
+    <script src="{{ asset('backend') }}/js/bootstrap-toggle.min.js"></script>
+
+    <script src="{{ asset('backend') }}/js/alertify.min.js"></script>
+
+    @yield('customjs')
     <!-- End custom js for this page-->
 </body>
 
