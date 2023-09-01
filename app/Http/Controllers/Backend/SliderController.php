@@ -55,6 +55,9 @@ class SliderController extends Controller
         $slider = Slider::where('id', $id)->firstOrFail();
 
         $uploadFolder = 'img/slider/';
+        if (!file_exists(public_path($uploadFolder))) {
+            mkdir(public_path($uploadFolder), 0777, true); // Dizini oluştur ve izinleri ayarla
+        }
         if ($request->hasFile('image')) {
             dosyasil($slider->image);
 

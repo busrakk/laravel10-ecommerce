@@ -1,5 +1,5 @@
-<!-- her sistem başlatıldığında çalışması için "autoload" alanına yazıldı -->
 <?php
+// <!-- her sistem başlatıldığında çalışması için "autoload" alanına yazıldı -->
 
 if(!function_exists('dosyasil')){
     function dosyasil($string){
