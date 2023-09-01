@@ -34,18 +34,8 @@ class SliderController extends Controller
 
         if ($request->hasFile('image')) {
             $img = $request->file('image');
-            $extension = $img->getClientOriginalExtension();
-            $folderName = time().'-'.Str::slug($request->name);
-            // $uploadFolder = 'img/slider/';
-
-            if (in_array($extension, ['pdf', 'svg', 'webp', 'jiff'])) { // Dosya uzantısına göre işlemler
-                $img->move(public_path($uploadFolder), $folderName.'.'.$extension);
-                $imgurl = $uploadFolder.$folderName.'.'.$extension;
-            } else {
-                $img = ImageResize::make($img);
-                $img->encode('webp', 75)->save($uploadFolder.$folderName.'.webp');
-                $imgurl = $uploadFolder.$folderName.'.webp';
-            }
+            $folderName = $request->name;
+            $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 
         Slider::create([
@@ -61,23 +51,19 @@ class SliderController extends Controller
     }
 
     public function update(Request $request, $id){
+
+        $slider = Slider::where('id', $id)->firstOrFail();
+
         $uploadFolder = 'img/slider/';
         if ($request->hasFile('image')) {
-            $img = $request->file('image');
-            $extension = $img->getClientOriginalExtension();
-            $folderName = time().'-'.Str::slug($request->name);
+            dosyasil($slider->image);
 
-            if (in_array($extension, ['pdf', 'svg', 'webp', 'jiff'])) { // Dosya uzantısına göre işlemler
-                $img->move(public_path($uploadFolder), $folderName.'.'.$extension);
-                $imgurl = $uploadFolder.$folderName.'.'.$extension;
-            } else {
-                $img = ImageResize::make($img);
-                $img->encode('webp', 75)->save($uploadFolder.$folderName.'.webp');
-                $imgurl = $uploadFolder.$folderName.'.webp';
-            }
+            $img = $request->file('image');
+            $folderName = $request->name;
+            $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 
-        Slider::where('id', $id)->update([
+        $slider->update([
             'name' => $request->name,
             'content' => $request->content,
             'link' => $request->link,
@@ -92,11 +78,14 @@ class SliderController extends Controller
     public function destroy(Request $request){
         $slider = Slider::where('id', $request->id)->firstOrFail();
 
-        if(file_exists($slider->image)){
-            if(!empty($slider->image)){
-                unlink($slider->image); // resmi sil
-            }
-        }
+        // bu kısmı helper.php dosyasında fonk oluşturuldu
+        // if(file_exists($slider->image)){
+        //     if(!empty($slider->image)){
+        //         unlink($slider->image); // resmi sil
+        //     }
+        // }
+
+        dosyasil($slider->image);
 
         $slider->delete();
         return response(['error'=>false, 'message'=>'Slider deleted successfully']);

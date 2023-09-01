@@ -23,7 +23,8 @@ class SliderRequest extends FormRequest
     {
         return [
             'name' => 'required|string|min:3',
-            'content' => 'required'
+            'content' => 'required',
+            'image' => 'required',
         ];
     }
 
