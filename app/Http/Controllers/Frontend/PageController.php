@@ -31,10 +31,12 @@ class PageController extends Controller
 
         // url'deki parametre sorguları
         // /products?size=LARGE&color=Black&page=2
-        $size = $request->size ?? null;
-        $color = $request->color ?? null;
-        $start_price = $request->start_price ?? null;
-        $end_price = $request->end_price ?? null;
+
+        // explode() fonksiyonu, bir dizeyi belirli bir ayraç veya karaktere göre parçalayan ve parçalanan parçaları bir dizi olarak döndürür
+        $sizes = !empty($request->size) ? explode(',', $request->size) : null;
+        $colors = !empty($request->color) ? explode(',', $request->color) : null;
+        $start_price = $request->min ?? null;
+        $end_price = $request->max ?? null;
 
         $order = $request->order ?? 'id';
         $sort = $request->sort ?? 'desc';
@@ -42,12 +44,14 @@ class PageController extends Controller
         $products = Product::where("status","1")
         ->select(['id','name', 'slug', 'size', 'color', 'price', 'category_id', 'image'])
         // filtreleme
-        ->where(function($q) use($size, $color, $start_price, $end_price){
-            if(!empty($size)){
-                $q->where('size', $size);
+        ->where(function($q) use($sizes, $colors, $start_price, $end_price){
+            // where koşulu, veritabanı sorgusu içinde belirli bir sütunu belirli bir değere göre filtrelemek için kullanılır.
+            // whereIn koşulu, bir sütunun birden fazla değeri ile karşılaştırmak için kullanılır. Bu, sütunun bir dizi değerle eşleştiği durumlarda kullanışlıdır.
+            if(!empty($sizes)){
+                $q->whereIn('size', $sizes);
             }
-            if(!empty($color)){
-                $q->where('color', $color);
+            if(!empty($colors)){
+                $q->whereIn('color', $colors);
             }
             if(!empty($start_price) && $end_price){
                 $q->where('price', [$start_price, $end_price]);
@@ -65,10 +69,6 @@ class PageController extends Controller
             return $q;
         });
 
-        // tablodaki min ve max fiyatı çekme
-        $minPrice = $products->min('price');
-        $maxPrice = $products->max('price');
-
         $sizeLists = Product::where("status","1")->groupBy('size')->pluck('size')->toArray();
 
         $colors = Product::where("status","1")->groupBy('color')->pluck('color')->toArray();
@@ -79,7 +79,9 @@ class PageController extends Controller
         // sasdece sayısını istersek withCount kullanılır
         // $categories = Category::where('status','1')->where('cat_ust', null)->withCount('items')->get();
 
-        return view('frontend.pages.products', compact('products' , 'minPrice','maxPrice', 'sizeLists', 'colors'));
+        $maxPrice = Product::max('price');
+
+        return view('frontend.pages.products', compact('products' , 'maxPrice', 'sizeLists', 'colors'));
     }
 
     public function saleproduct(){

@@ -126,7 +126,8 @@
                                         <a href="{{ route($category->slug . 'product') }}"
                                             class="d-flex"><span>{{ $category->name }}</span>
                                             {{-- <span class="text-black ml-auto">({{ $category->items_count }})</span> --}}
-                                            <span class="text-black ml-auto">({{$category->getTotalProductCount()}})</span>
+                                            <span
+                                                class="text-black ml-auto">({{ $category->getTotalProductCount() }})</span>
                                         </a>
                                     </li>
                                 @endforeach
@@ -145,25 +146,37 @@
                         <div class="mb-4">
                             <h3 class="mb-3 h6 text-uppercase text-black d-block">Size</h3>
                             @if (!empty($sizeLists))
-                                @foreach ($sizeLists as $sizeList)
-                                    <label for="s_sm" class="d-flex">
-                                        <input type="checkbox" id="s_sm" class="mr-2 mt-1"> <span
-                                            class="text-black">{{ $sizeList }}</span>
-                                    </label>
-                                @endforeach
+                                @if (!empty($sizeLists))
+                                    @foreach ($sizeLists as $key => $size)
+                                        <label for="size{{ $key }}" class="d-flex">
+                                            <input type="checkbox" value="{{ $size }}"
+                                                id="size{{ $key }}"
+                                                {{ isset(request()->size) && in_array($size, explode(',', request()->size)) ? 'checked' : '' }}
+                                                class="mr-2 mt-1 sizeList"> <span
+                                                class="text-black">{{ $size }}</span>
+                                        </label>
+                                    @endforeach
+                                @endif
                             @endif
                         </div>
 
                         <div class="mb-4">
                             <h3 class="mb-3 h6 text-uppercase text-black d-block">Color</h3>
                             @if (!empty($colors))
-                                @foreach ($colors as $color)
-                                    <a href="#" class="d-flex color-item align-items-center">
-                                        <span class="bg-danger color d-inline-block rounded-circle mr-2"></span> <span
+                                @foreach ($colors as $key => $color)
+                                    <label for="color{{ $key }}" class="d-flex">
+                                        <input type="checkbox" value="{{ $color }}"
+                                            id="color{{ $key }}"
+                                            {{ isset(request()->color) && in_array($color, explode(',', request()->color)) ? 'checked' : '' }}
+                                            class="mr-2 mt-1 colorList"> <span
                                             class="text-black">{{ $color }}</span>
-                                    </a>
+                                    </label>
                                 @endforeach
                             @endif
+                        </div>
+
+                        <div class="mb-4">
+                            <button class="btn btn-block btn-primary filterBtn">Filter</button>
                         </div>
 
                     </div>
@@ -214,7 +227,30 @@
 
 @section('customjs')
     <script>
-        var minPrice = "{{ $minPrice }}";
         var maxPrice = "{{ $maxPrice }}";
+        var defaultMinPrice = "{{ request()->min ?? 0 }}"; // varsa minprice yoksa 0
+        var defaultMaxPrice = "{{ request()->max ?? $maxPrice }}";
+
+        var url = new URL(window.location.href); //baseURL alır - düzenlenebilir hala getirir
+        $(document).on('click', '.filterBtn', function(e) {
+            let colorList = $(".colorList:checked").map((_, chk) => chk.value).get();
+            let sizeList = $(".sizeList:checked").map((_, chk) => chk.value).get();
+
+            if (colorList.length > 0) {
+                url.searchParams.set("color", colorList.join(","));
+            } else {
+                url.searchParams.delete("color");
+            }
+
+            if (sizeList.length > 0) {
+                url.searchParams.set("size", sizeList.join(","));
+            } else {
+                url.searchParams.delete("size");
+            }
+
+            newUrl = url.href;
+            window.history.pushState({}, '', newUrl);
+            location.reload(); // sayfayı refresh etme
+        });
     </script>
 @endsection
