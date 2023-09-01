@@ -54,7 +54,9 @@ class PageController extends Controller
                 $q->whereIn('color', $colors);
             }
             if(!empty($start_price) && $end_price){
-                $q->where('price', [$start_price, $end_price]);
+                // $q->whereBetween('price', [$start_price, $end_price]);
+                $q->where('price', '>=' , $start_price);
+                $q->where('price', '<=', $end_price);
             }
             return $q;
         })
@@ -67,13 +69,16 @@ class PageController extends Controller
                 $q->where('slug', $slug);
             }
             return $q;
-        });
+        })->orderBy($order, $sort)->paginate(21);
+
+        if($request->ajax()){
+            $view = view('frontend.ajax.productList',compact('products'))->render();
+            return response(['data'=>$view, 'paginate'=>(string) $products->withQueryString()->links('vendor.pagination.custom')]);
+        }
 
         $sizeLists = Product::where("status","1")->groupBy('size')->pluck('size')->toArray();
 
         $colors = Product::where("status","1")->groupBy('color')->pluck('color')->toArray();
-
-        $products = $products->orderBy($order, $sort)->paginate(21);
 
         // ilişki kurulduğu için with kullanıldı
         // sasdece sayısını istersek withCount kullanılır

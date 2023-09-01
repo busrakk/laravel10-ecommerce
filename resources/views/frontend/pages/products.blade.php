@@ -23,31 +23,21 @@
                             </div>
                             <div class="d-flex">
                                 <div class="dropdown mr-1 ml-md-auto">
-                                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle"
-                                        id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        Latest
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-                                        @if (!empty($categories) && $categories->count() > 0)
-                                            @foreach ($categories->where('cat_ust', null) as $category)
-                                                <a class="dropdown-item" href="#">{{ $category->name }}</a>
-                                            @endforeach
-                                        @endif
-                                    </div>
+
                                 </div>
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle"
-                                        id="dropdownMenuReference" data-toggle="dropdown">Reference</button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                                        <a class="dropdown-item" href="#" data-sira="a_z_order">Name, A to Z</a>
-                                        <a class="dropdown-item" href="#" data-sira="z_a_order">Name, Z to A</a>
+                                    <select class="form-control" id="orderList">
+                                        <option class="dropdown-item" value="">Reference</option>
+                                        <option class="dropdown-item" value="id-asc">Name, A to Z
+                                        </option>
+                                        <option class="dropdown-item" value="id-desc">Name, Z to A
+                                        </option>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#" data-sira="price_min_order">Price, low to
-                                            high</a>
-                                        <a class="dropdown-item" href="#" data-sira="price_max_order">Price, high to
-                                            low</a>
-                                    </div>
+                                        <option class="dropdown-item" value="price-asc">Price,
+                                            low to high</option>
+                                        <option class="dropdown-item" value="price-desc">Price,
+                                            high to low</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -62,43 +52,14 @@
                     </div>
 
 
-                    <div class="row mb-5">
+                    <div class="row mb-5 productContent">
 
-                        @if (!empty($products) && $products->count() > 0)
-                            @foreach ($products as $product)
-                                <div class="col-sm-6 col-lg-4 mb-4" data-aos="fade-up">
-                                    <div class="block-4 text-center border">
-                                        <figure class="block-4-image">
-                                            <a href="{{ route('productdetail', $product->slug) }}"><img
-                                                    src="{{ asset($product->image) }}" alt="{{ $product->name }}"
-                                                    class="img-fluid"></a>
-                                        </figure>
-                                        <div class="block-4-text p-4">
-                                            <h3><a
-                                                    href="{{ route('productdetail', $product->slug) }}">{{ $product->name }}</a>
-                                            </h3>
-                                            <p class="mb-0">{{ $product->short_text }}</p>
-                                            <p class="text-primary font-weight-bold">
-                                                ${{ number_format($product->price, 0) }}</p>
-
-                                            <form method="POST" action="{{ route('cartadd') }}">
-                                                @csrf
-                                                <input type="hidden" name="product_id" value={{ $product->id }}>
-                                                <input type="hidden" name="size" value={{ $product->size }}>
-                                                <p><button type="submit" class="buy-now btn btn-sm btn-primary">Add To
-                                                        Cart</button>
-                                                </p>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endif
+                        @include('frontend.ajax.productList')
 
                     </div>
 
                     {{-- "withQueryString()" tüm sayfalarda mevcut filtrelemeyi kullanmak için  --}}
-                    <div class="row" data-aos="fade-up">
+                    <div class="row paginateButtons" data-aos="fade-up">
                         {{ $products->withQueryString()->links('vendor.pagination.custom') }}
                         {{-- <div class="col-md-12 text-center">
                             <div class="site-block-27">
@@ -141,6 +102,7 @@
                             <div id="slider-range" class="border-primary"></div>
                             <input type="text" name="text" id="amount" class="form-control border-0 pl-0 bg-white"
                                 disabled="" />
+                            <input type="text" name="text" id="priceBetween" class="form-control" hidden />
                         </div>
 
                         <div class="mb-4">
@@ -149,8 +111,7 @@
                                 @if (!empty($sizeLists))
                                     @foreach ($sizeLists as $key => $size)
                                         <label for="size{{ $key }}" class="d-flex">
-                                            <input type="checkbox" value="{{ $size }}"
-                                                id="size{{ $key }}"
+                                            <input type="checkbox" value="{{ $size }}" id="size{{ $key }}"
                                                 {{ isset(request()->size) && in_array($size, explode(',', request()->size)) ? 'checked' : '' }}
                                                 class="mr-2 mt-1 sizeList"> <span
                                                 class="text-black">{{ $size }}</span>
@@ -165,8 +126,7 @@
                             @if (!empty($colors))
                                 @foreach ($colors as $key => $color)
                                     <label for="color{{ $key }}" class="d-flex">
-                                        <input type="checkbox" value="{{ $color }}"
-                                            id="color{{ $key }}"
+                                        <input type="checkbox" value="{{ $color }}" id="color{{ $key }}"
                                             {{ isset(request()->color) && in_array($color, explode(',', request()->color)) ? 'checked' : '' }}
                                             class="mr-2 mt-1 colorList"> <span
                                             class="text-black">{{ $color }}</span>
@@ -199,12 +159,10 @@
                                 @endphp --}}
                                 {{-- @foreach ($allcategories->where('cat_ust', null) as $category) --}}
                                 @foreach ($categories->where('cat_ust', null) as $category)
-                                    <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade"
-                                        data-aos-delay="">
+                                    <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
                                         <a class="block-2-item" href="{{ route($category->slug . 'product') }}">
                                             <figure class="image">
-                                                <img src="{{ asset($category->image) }}" alt=""
-                                                    class="img-fluid">
+                                                <img src="{{ asset($category->image) }}" alt="" class="img-fluid">
                                             </figure>
                                             <div class="text">
                                                 <span class="text-uppercase">Collections</span>
@@ -233,6 +191,10 @@
 
         var url = new URL(window.location.href); //baseURL alır - düzenlenebilir hala getirir
         $(document).on('click', '.filterBtn', function(e) {
+            filter();
+        });
+
+        function filter() {
             let colorList = $(".colorList:checked").map((_, chk) => chk.value).get();
             let sizeList = $(".sizeList:checked").map((_, chk) => chk.value).get();
 
@@ -248,9 +210,42 @@
                 url.searchParams.delete("size");
             }
 
+            var price = $('#priceBetween').val().split('-');
+            url.searchParams.set("min", price[0])
+
+            url.searchParams.set("max", price[1])
+
             newUrl = url.href;
             window.history.pushState({}, '', newUrl);
-            location.reload(); // sayfayı refresh etme
+            // location.reload(); // sayfayı refresh etme
+
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "GET",
+                url: newUrl,
+                success: function(response) {
+
+                    $('.productContent').html(response.data);
+                    $('.paginateButtons').html(response.paginate)
+                }
+            });
+        }
+
+        $(document).on('change', '#orderList', function(e) {
+            var order = $(this).val();
+
+            if (order != '') {
+                orderby = order.split('-');
+                url.searchParams.set("order", orderby[0])
+                url.searchParams.set("sort", orderby[1])
+            } else {
+                url.searchParams.delete('order');
+                url.searchParams.delete('sort');
+            }
+
+            filter();
         });
     </script>
 @endsection
