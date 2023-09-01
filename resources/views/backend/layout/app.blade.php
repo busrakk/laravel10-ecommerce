@@ -25,6 +25,9 @@
     <link rel="stylesheet" href="{{ asset('backend') }}/css/alertify-bootstrap.min.css" />
     <!-- endinject -->
     <link rel="shortcut icon" href="images/favicon.png" />
+
+    @yield('customcss')
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
