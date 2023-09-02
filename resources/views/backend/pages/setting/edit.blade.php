@@ -46,7 +46,7 @@
                             @method('PUT')
                         @endif
 
-                        <select name="set_type" class="form-control">
+                        <select name="set_type" class="form-control" id="setTypeSelect">
                             <option value="">
                                 Select Type
                             </option>
@@ -138,7 +138,6 @@
 
     <script>
         const option = {
-            // language: 'tr',
             heading: {
                 options: [{
                         model: 'paragraph',
@@ -183,12 +182,81 @@
                     }
                 ]
             },
+        };
+        let YourEditor;
+
+        function ckeditor() {
+            ClassicEditor
+                .create(document.querySelector('#editor'), option)
+                .then(editor => {
+                    window.editor = editor;
+                    YourEditor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
         }
 
-        ClassicEditor
-            .create(document.querySelector('#editor'), option)
-            .catch(error => {
-                console.error(error);
-            });
+        $(document).on('change', '#setTypeSelect', function(e) {
+            selectType = $(this).val();
+            createInput(selectType);
+        });
+
+        @if (isset($setting->data) && $setting->set_type == 'ckeditor')
+            ckeditor();
+        @endif
+
+        function createInput(type) {
+            defaultText = "{!! isset($setting->data) ? $setting->data : '' !!}";
+
+            if (type === 'text') {
+                newInput = $('<input>').attr({
+                    type: 'text',
+                    name: 'data',
+                    value: defaultText,
+                    class: 'form-control',
+                    placeholder: "Enter Value"
+                });
+            } else if (type === 'email') {
+                newInput = $('<input>').attr({
+                    type: 'email',
+                    name: 'data',
+                    value: defaultText,
+                    class: 'form-control',
+                    placeholder: "Enter Email"
+                });
+
+            } else if (type === 'file' || type === 'image') {
+                newInput = $('<input>').attr({
+                    type: 'file',
+                    name: 'data',
+                });
+            } else if (type === 'ckeditor') {
+                newInput = $('<textarea>').attr({
+                    name: 'data',
+                    class: 'editor',
+                    value: defaultText,
+                    id: 'editor',
+                });
+                newInput.val(defaultText);
+            } else if (type === 'textarea') {
+                newInput = $('<textarea>').attr({
+                    name: 'data',
+                    value: defaultText,
+                    placeholder: 'Textarea',
+                    class: 'form-control textInput',
+                });
+                newInput.val(defaultText);
+            }
+
+
+            $('.inputContent').empty().append(newInput);
+            if (type === 'ckeditor') {
+                ckeditor();
+
+            }
+
+        }
     </script>
 @endsection

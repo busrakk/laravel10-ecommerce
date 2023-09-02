@@ -20,7 +20,6 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
                                     <th>Key</th>
                                     <th>Value</th>
                                     <th>Key Type</th>
@@ -31,13 +30,14 @@
                                 @if (!empty($settings) && $settings->count() > 0)
                                     @foreach ($settings as $setting)
                                         <tr class="item" item-id="{{ $setting->id }}">
-                                            <td class="py-1">
+                                            <td>{{ $setting->name }}</td>
+                                            <td>
                                                 @if ($setting->set_type == 'image')
-                                                    <img src="{{ asset($setting->data) }}" alt="img" />
+                                                    <img src="{{ asset($setting->data) }}" alt="img"  />
+                                                @else
+                                                    {{ $setting->data ?? '' }}
                                                 @endif
                                             </td>
-                                            <td>{{ $setting->name }}</td>
-                                            <td>{{ $setting->data ?? '' }}</td>
                                             <td>{{ $setting->set_type }}</td>
                                             <td class="d-flex">
                                                 <a href="{{ route('panel.setting.edit', $setting->id) }}"

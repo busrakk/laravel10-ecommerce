@@ -62,4 +62,13 @@ class SettingController extends Controller
 
         return back()->withSuccess('Setting updated successfully');
     }
+
+    public function destroy(Request $request){
+        $setting = SiteSetting::where('id', $request->id)->firstOrFail();
+
+        dosyasil($setting->data);
+
+        $setting->delete();
+        return response(['error'=>false, 'message'=>'Setting deleted successfully']);
+    }
 }
