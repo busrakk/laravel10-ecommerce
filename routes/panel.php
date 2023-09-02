@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\Backend\AboutController;
-use App\Http\Controllers\Backend\CategoryController;
-use App\Http\Controllers\Backend\ContactController;
-use App\Http\Controllers\Backend\DashboardController;
-use App\Http\Controllers\Backend\SliderController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\AboutController;
+use App\Http\Controllers\Backend\SliderController;
+use App\Http\Controllers\Backend\ContactController;
+use App\Http\Controllers\Backend\SettingController;
+use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\DashboardController;
 
 
 Route::group(['middleware' => ['panelsetting', 'auth'], 'prefix'=>'panel', 'as'=>'panel.'], function(){
@@ -34,4 +35,11 @@ Route::group(['middleware' => ['panelsetting', 'auth'], 'prefix'=>'panel', 'as'=
     Route::put('/contact/{id}/update', [ContactController::class, 'update'])->name('contact.update');
     Route::delete('/contact/destroy', [ContactController::class, 'destroy'])->name('contact.destroy');
     Route::post('/contact-status/update', [ContactController::class, 'status'])->name('contact.status');
+    // setting route
+    Route::get('/setting', [SettingController::class, 'index'])->name('setting.index');
+    Route::get('/setting/add', [SettingController::class, 'create'])->name('setting.create');
+    Route::get('/setting/{id}/edit', [SettingController::class, 'edit'])->name('setting.edit');
+    Route::post('/setting/store', [SettingController::class, 'store'])->name('setting.store');
+    Route::put('/setting/{id}/update', [SettingController::class, 'update'])->name('setting.update');
+    Route::delete('/setting/destroy', [SettingController::class, 'destroy'])->name('setting.destroy');
 });

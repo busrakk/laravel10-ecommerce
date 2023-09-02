@@ -47,5 +47,11 @@
                 <span class="menu-title">Contact</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('panel.setting.index') }}">
+                <i class="icon-grid menu-icon"></i>
+                <span class="menu-title">Site Setting</span>
+            </a>
+        </li>
     </ul>
 </nav>

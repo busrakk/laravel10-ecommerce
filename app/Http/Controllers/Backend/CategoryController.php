@@ -32,14 +32,11 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request)
     {
-        $uploadFolder = 'img/category/';
-        if (!file_exists(public_path($uploadFolder))) {
-            mkdir(public_path($uploadFolder), 0777, true); // Dizini oluştur ve izinleri ayarla
-        }
-
         if ($request->hasFile('image')) {
             $img = $request->file('image');
             $folderName = $request->name;
+            $uploadFolder = 'img/category/';
+            folderOpen($uploadFolder);
             $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 
@@ -79,16 +76,13 @@ class CategoryController extends Controller
     {
         $category = Category::where('id', $id)->firstOrFail();
 
-        $uploadFolder = 'img/category/';
-        if (!file_exists(public_path($uploadFolder))) {
-            mkdir(public_path($uploadFolder), 0777, true); // Dizini oluştur ve izinleri ayarla
-        }
-
         if ($request->hasFile('image')) {
             dosyasil($category->image);
 
             $img = $request->file('image');
             $folderName = $request->name;
+            $uploadFolder = 'img/category/';
+            folderOpen($uploadFolder);
             $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 

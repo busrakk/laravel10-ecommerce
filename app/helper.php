@@ -38,3 +38,9 @@ if(!function_exists('strLimit')){
         return Str::limit($text, $limit, $end);
     }
 }
+
+function folderOpen($folderPath, $permissions = 0777){
+    if(!file_exists($folderPath)){
+        mkdir($folderPath, $permissions, true);
+    }
+}

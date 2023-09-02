@@ -14,13 +14,12 @@ class AboutController extends Controller
     }
 
     public function update(Request $request, $id = 1){
-        $uploadFolder = 'img/about/';
-        if (!file_exists(public_path($uploadFolder))) {
-            mkdir(public_path($uploadFolder), 0777, true); // Dizini oluştur ve izinleri ayarla
-        }
+
         if ($request->hasFile('image')) {
             $img = $request->file('image');
             $folderName = $request->name;
+            $uploadFolder = 'img/about/';
+            folderOpen($uploadFolder);
             $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 

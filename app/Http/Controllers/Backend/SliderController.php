@@ -27,14 +27,11 @@ class SliderController extends Controller
 
     public function store(SliderRequest $request){
 
-        $uploadFolder = 'img/slider/';
-        if (!file_exists(public_path($uploadFolder))) {
-            mkdir(public_path($uploadFolder), 0777, true); // Dizini oluştur ve izinleri ayarla
-        }
-
         if ($request->hasFile('image')) {
             $img = $request->file('image');
             $folderName = $request->name;
+            $uploadFolder = 'img/slider/';
+            folderOpen($uploadFolder);
             $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 
@@ -54,15 +51,13 @@ class SliderController extends Controller
 
         $slider = Slider::where('id', $id)->firstOrFail();
 
-        $uploadFolder = 'img/slider/';
-        if (!file_exists(public_path($uploadFolder))) {
-            mkdir(public_path($uploadFolder), 0777, true); // Dizini oluştur ve izinleri ayarla
-        }
         if ($request->hasFile('image')) {
             dosyasil($slider->image);
 
             $img = $request->file('image');
             $folderName = $request->name;
+            $uploadFolder = 'img/setting/';
+            folderOpen($uploadFolder);
             $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 
