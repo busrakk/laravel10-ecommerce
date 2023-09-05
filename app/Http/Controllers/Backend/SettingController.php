@@ -52,10 +52,16 @@ class SettingController extends Controller
             $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 
+        if($request->set_type == 'file' || $request->set_type == 'image') {
+            $dataImage = $imgurl ?? $setting->data;
+        }else{
+            $dataImage = $request->data ?? $setting->data;
+        }
+
             $setting->update(
                 [
                  'name' => $key,
-                 'data' => $imgurl ?? $request->data,
+                 'data' => $dataImage,
                  'set_type' => $request->set_type
                 ]
         );

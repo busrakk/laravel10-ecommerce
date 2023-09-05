@@ -66,7 +66,7 @@ class SliderController extends Controller
             'content' => $request->content,
             'link' => $request->link,
             'status' => $request->status,
-            'image' => $imgurl ?? NULL,
+            'image' => $imgurl ?? $slider->image,
         ]);
 
         return back()->withSuccess('Slider updated successfully');

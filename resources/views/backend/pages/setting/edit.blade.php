@@ -39,6 +39,14 @@
                         @endphp
                     @endif
 
+                    @if (isset($setting->set_type) && $setting->set_type == 'image')
+                        <div class="form-group">
+                            <div class="input-group col-xs-12 mb-2">
+                                <img src="{{ asset($setting->data ?? 'img/noimage.webp') }}" alt="">
+                            </div>
+                        </div>
+                    @endif
+
                     <form class="forms-sample" action="{{ $routeLink }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
@@ -71,14 +79,6 @@
                                 {{ isset($setting->set_type) && $setting->set_type == 'email' ? 'selected' : '' }}>Email
                             </option>
                         </select>
-
-                        <div class="form-group">
-                            <div class="input-group col-xs-12">
-                                @if (isset($setting->set_type) && $setting->set_type == 'image')
-                                    <img src="{{ asset($setting->data ?? 'img/noimage.webp') }}" alt="">
-                                @endif
-                            </div>
-                        </div>
 
                         {{-- <div class="form-group">
                             <label>Image</label>

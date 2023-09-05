@@ -91,7 +91,7 @@ class CategoryController extends Controller
             'cat_ust' => $request->cat_ust,
             'status' => $request->status,
             'content' => $request->content,
-            'image' => $imgurl ?? NULL,
+            'image' => $imgurl ?? $category->image,
         ]);
 
         return back()->withSuccess('Category updated successfully');

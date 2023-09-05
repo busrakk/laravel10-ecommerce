@@ -23,10 +23,12 @@ class AboutController extends Controller
             $imgurl = resimyukle($img, $folderName, $uploadFolder);
         }
 
-        $about = About::updateOrCreate(
+        $about = About::where('id', $id)->first();
+
+        About::updateOrCreate(
             ['id'=>$id], // sorgu kısmı
             [
-                'image'=>$imgurl ?? null,
+                'image'=>$imgurl ?? $about->image,
                 'name'=>$request->name,
                 'content'=>$request->content,
                 'text_1_icon'=>$request->text_1_icon,

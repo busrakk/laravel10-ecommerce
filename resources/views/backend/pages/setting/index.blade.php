@@ -33,9 +33,9 @@
                                             <td>{{ $setting->name }}</td>
                                             <td>
                                                 @if ($setting->set_type == 'image')
-                                                    <img src="{{ asset($setting->data) }}" alt="img"  />
+                                                    <img src="{{ asset($setting->data) }}" alt="img" />
                                                 @else
-                                                    {{ $setting->data ?? '' }}
+                                                    {!! strLimit($setting->data, 20, route('panel.setting.edit', $setting->id)) !!}
                                                 @endif
                                             </td>
                                             <td>{{ $setting->set_type }}</td>

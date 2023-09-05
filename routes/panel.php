@@ -7,7 +7,7 @@ use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\DashboardController;
-
+use App\Http\Controllers\Backend\ProductController;
 
 Route::group(['middleware' => ['panelsetting', 'auth'], 'prefix'=>'panel', 'as'=>'panel.'], function(){
     Route::get('/', [DashboardController::class, 'index'])->name('panel');
@@ -42,4 +42,8 @@ Route::group(['middleware' => ['panelsetting', 'auth'], 'prefix'=>'panel', 'as'=
     Route::post('/setting/store', [SettingController::class, 'store'])->name('setting.store');
     Route::put('/setting/{id}/update', [SettingController::class, 'update'])->name('setting.update');
     Route::delete('/setting/destroy', [SettingController::class, 'destroy'])->name('setting.destroy');
+    // product route
+    Route::resource('/product', ProductController::class)->except('destroy');
+    Route::delete('/product/destroy', [ProductController::class, 'destroy'])->name('product.destroy');
+    Route::post('/product-status/update', [ProductController::class, 'status'])->name('product.status');
 });
