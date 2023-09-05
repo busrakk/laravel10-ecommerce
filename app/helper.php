@@ -39,8 +39,10 @@ if(!function_exists('strLimit')){
     }
 }
 
-function folderOpen($folderPath, $permissions = 0777){
-    if(!file_exists($folderPath)){
-        mkdir($folderPath, $permissions, true);
+if(!function_exists('folderOpen')){
+    function folderOpen($folderPath, $permissions = 0777){
+        if(!file_exists($folderPath)){
+            mkdir($folderPath, $permissions, true);
+        }
     }
 }

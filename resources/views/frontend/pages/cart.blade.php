@@ -17,6 +17,10 @@
                     @if (session()->get('success'))
                         <div class="alert alert-success">{{ session()->get('success') }}</div>
                     @endif
+
+                    @if (session()->get('error'))
+                        <div class="alert alert-danger">{{ session()->get('error') }}</div>
+                    @endif
                 </div>
             </div>
             <div class="row mb-5">
@@ -80,19 +84,25 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label class="text-black h4" for="coupon">Coupon</label>
-                            <p>Enter your coupon code if you have one.</p>
+                    <form action="{{ route('coupon.check') }}" method="POST">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label class="text-black h4" for="coupon">Coupon</label>
+                                <p>Enter your coupon code if you have one.</p>
+                            </div>
+                            <div class="col-md-8 mb-3 mb-md-0">
+                                <input type="text" class="form-control py-3" name="coupon_name"
+                                    value="{{ session()->get('couponCode') ?? '' }}" id="coupon"
+                                    placeholder="Coupon Code">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-primary btn-sm">Apply Coupon</button>
+                            </div>
                         </div>
-                        <div class="col-md-8 mb-3 mb-md-0">
-                            <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code">
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-primary btn-sm">Apply Coupon</button>
-                        </div>
-                    </div>
+                    </form>
                 </div>
+
                 <div class="col-md-6 pl-5">
                     <div class="row justify-content-end">
                         <div class="col-md-7">
@@ -114,7 +124,7 @@
                                     <span class="text-black">Total</span>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <strong class="text-black">$ {{ $totalPrice }}</strong>
+                                    <strong class="text-black">$ {{ session()->get('totalPrice') ?? 0 }}</strong>
                                 </div>
                             </div>
 

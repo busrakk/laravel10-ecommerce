@@ -32,6 +32,7 @@ Route::group(['middleware' => 'sitesetting'], function(){
     Route::get('/cart', [CartController::class, 'index'])->name('cart');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cartadd');
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cartremove');
+    Route::post('/cart/couponcheck', [CartController::class, 'couponcheck'])->name('coupon.check');
 
     Auth::routes();
     Route::get('logout', [AjaxController::class, 'logout'])->name('logout');
