@@ -46,7 +46,7 @@ class CartController extends Controller
         $cartItem = session('cart', []);
 
         if(array_key_exists($productID, $cartItem)){
-            $cartItem[$productID]['qty'] += $qty;
+            $cartItem[$productID]['qty'] += $qty; // adet ekleme
         }else{
             $cartItem[$productID]=[
                 'image' => $product->image,
@@ -58,6 +58,10 @@ class CartController extends Controller
         }
 
         session(['cart' => $cartItem]);
+
+        if($request->ajax()){
+            return response()->json(['Cart updated successfully']);
+        }
 
         return back()->withSuccess('Product successfully added to cart.');
     }
@@ -99,5 +103,32 @@ class CartController extends Controller
         }
 
         return back()->withSuccess('Coupon applied successfully.');
+    }
+
+    public function newQty(Request $request){
+        $productID= $request->product_id;
+        $qty= $request->qty ?? 1;
+        $itemTotal = 0;
+
+        $product = Product::find($productID);
+        if(!$product) {
+            return response()->json('Product not found!');
+        }
+        $cartItem = session('cart',[]);
+
+
+        if(array_key_exists($productID,$cartItem)){
+            $cartItem[$productID]['qty'] = $qty; // adet güncelleme
+            if($qty == 0 || $qty < 0){
+                unset($cartItem[$productID]);
+            }
+            $itemTotal = $product->price * $qty;
+        }
+
+        session(['cart'=>$cartItem]);
+
+        if($request->ajax()) {
+            return response()->json(['itemTotal' => $itemTotal, 'message' => 'Cart updated successfully']);
+        }
     }
 }

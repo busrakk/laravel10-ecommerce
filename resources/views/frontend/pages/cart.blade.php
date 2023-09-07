@@ -40,7 +40,7 @@
 
                             @if ($cartItem)
                                 @foreach ($cartItem as $key => $cart)
-                                    <tr>
+                                    <tr class="orderItem" data-id="{{ $key }}">
                                         <td class="product-thumbnail">
                                             <img src="{{ asset($cart['image']) }}" alt="Image" class="img-fluid">
                                         </td>
@@ -51,21 +51,21 @@
                                         <td>
                                             <div class="input-group mb-3" style="max-width: 120px;">
                                                 <div class="input-group-prepend">
-                                                    <button class="btn btn-outline-primary js-btn-minus"
+                                                    <button class="decreaseBtn btn btn-outline-primary js-btn-minus"
                                                         type="button">&minus;</button>
                                                 </div>
-                                                <input type="text" class="form-control text-center"
+                                                <input type="text" class="qtyItem form-control text-center"
                                                     value="{{ $cart['qty'] }}" placeholder=""
                                                     aria-label="Example text with button addon"
                                                     aria-describedby="button-addon1">
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-outline-primary js-btn-plus"
+                                                    <button class="increaseBtn btn btn-outline-primary js-btn-plus"
                                                         type="button">&plus;</button>
                                                 </div>
                                             </div>
 
                                         </td>
-                                        <td>$ {{ $cart['price'] * $cart['qty'] }}</td>
+                                        <td class="itemTotal">$ {{ $cart['price'] * $cart['qty'] }}</td>
                                         <td>
                                             <form action="{{ route('cartremove') }}" method="POST">
                                                 @csrf
@@ -130,8 +130,8 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button class="btn btn-primary btn-lg py-3 btn-block"
-                                        onclick="window.location='checkout.html'">Proceed To Checkout</button>
+                                    <button class="paymentButton btn btn-primary btn-lg py-3 btn-block">Proceed To
+                                        Checkout</button>
                                 </div>
                             </div>
                         </div>
@@ -140,4 +140,44 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('customjs')
+    <script>
+        $(document).on('click', '.decreaseBtn', function(e) {
+            $('.orderItem').removeClass('selected');
+            $(this).closest('.orderItem').addClass('selected');
+            sepetUpdate();
+        });
+
+        $(document).on('click', '.increaseBtn', function(e) {
+            $('.orderItem').removeClass('selected');
+            $(this).closest('.orderItem').addClass('selected');
+            sepetUpdate();
+        });
+
+        function sepetUpdate() {
+            var product_id = $('.selected').closest('.orderItem').attr('data-id');
+            var qty = $('.selected').closest('.orderItem').find('.qtyItem').val();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "POST",
+                url: "{{ route('cartnewQty') }}",
+                data: {
+                    product_id: product_id,
+                    qty: qty,
+                },
+                success: function(response) {
+                    $('.selected').find('.itemTotal').text('$' + response.itemTotal);
+                    if (qty == 0) {
+                        $('.selected').remove();
+                    }
+                    $('.newTotalPrice').text(response.totalPrice);
+                }
+            });
+        }
+
+    </script>
 @endsection

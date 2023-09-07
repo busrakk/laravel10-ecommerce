@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <title>Shoppers &mdash; E-Commerce</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -18,26 +19,30 @@
 
     <link rel="stylesheet" href="{{ asset('/') }}css/style.css">
 
-  </head>
-  <body>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <div class="site-wrap">
-    @include('frontend.inc.header')
+</head>
 
-    @yield('content')
+<body>
 
-    @include('frontend.inc.footer')
-  </div>
+    <div class="site-wrap">
+        @include('frontend.inc.header')
 
-  <script src="{{ asset('/') }}js/jquery-3.3.1.min.js"></script>
-  <script src="{{ asset('/') }}js/jquery-ui.js"></script>
-  <script src="{{ asset('/') }}js/popper.min.js"></script>
-  <script src="{{ asset('/') }}js/bootstrap.min.js"></script>
-  <script src="{{ asset('/') }}js/owl.carousel.min.js"></script>
-  <script src="{{ asset('/') }}js/jquery.magnific-popup.min.js"></script>
-  <script src="{{ asset('/') }}js/aos.js"></script>
-  @yield('customjs')
-  <script src="{{ asset('/') }}js/main.js"></script>
+        @yield('content')
 
-  </body>
+        @include('frontend.inc.footer')
+    </div>
+
+    <script src="{{ asset('/') }}js/jquery-3.3.1.min.js"></script>
+    <script src="{{ asset('/') }}js/jquery-ui.js"></script>
+    <script src="{{ asset('/') }}js/popper.min.js"></script>
+    <script src="{{ asset('/') }}js/bootstrap.min.js"></script>
+    <script src="{{ asset('/') }}js/owl.carousel.min.js"></script>
+    <script src="{{ asset('/') }}js/jquery.magnific-popup.min.js"></script>
+    <script src="{{ asset('/') }}js/aos.js"></script>
+    @yield('customjs')
+    <script src="{{ asset('/') }}js/main.js"></script>
+
+</body>
+
 </html>
