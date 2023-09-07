@@ -124,7 +124,7 @@
                                     <span class="text-black">Total</span>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <strong class="text-black">$ {{ session()->get('totalPrice') ?? 0 }}</strong>
+                                    <strong class="text-black">$ {{session()->get('totalPrice') ?? ''}}</strong>
                                 </div>
                             </div>
 
@@ -144,6 +144,15 @@
 
 @section('customjs')
     <script>
+        $(document).on('click', '.paymentButton', function(e) {
+            var url = "{{ route('cart.form') }}";
+
+            @if (!empty(session()->get('cart')))
+                window.location.href = url;
+            @endif
+
+        });
+
         $(document).on('click', '.decreaseBtn', function(e) {
             $('.orderItem').removeClass('selected');
             $(this).closest('.orderItem').addClass('selected');
@@ -178,6 +187,5 @@
                 }
             });
         }
-
     </script>
 @endsection

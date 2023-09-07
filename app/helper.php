@@ -46,3 +46,15 @@ if(!function_exists('folderOpen')){
         }
     }
 }
+
+// random order sıra oluşturma
+if(!function_exists('generateOTP')){
+    function generateOTP($n){
+        $generator = "123456789123";
+        $result = '';
+        for($i=1;$i<$n;$i++){
+            $result = substr($generator,(rand()%(strlen($generator))),1);
+        }
+        return $result;
+    }
+}

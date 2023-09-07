@@ -34,6 +34,8 @@ Route::group(['middleware' => 'sitesetting'], function(){
     Route::post('/cart/remove', [CartController::class, 'remove'])->name('cartremove');
     Route::post('/cart/couponcheck', [CartController::class, 'couponcheck'])->name('coupon.check');
     Route::post('/cart/newQty', [CartController::class, 'newQty'])->name('cartnewQty');
+    Route::get('/cart/form', [CartController::class, 'cartform'])->name('cart.form');
+    Route::post('/cart/save', [CartController::class, 'cartSave'])->name('cart.save');
 
     Auth::routes();
     Route::get('logout', [AjaxController::class, 'logout'])->name('logout');

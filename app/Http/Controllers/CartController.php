@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Coupon;
+use App\Models\Invoice;
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -97,6 +99,7 @@ class CartController extends Controller
 
         session()->put('totalPrice', $totalPrice);
         session()->put('couponCode', $couponCode);
+        session()->put('couponPrice', $couponPrice);
 
         if(empty($coupon)){
             return back()->withError('Coupon not found.');
@@ -130,5 +133,88 @@ class CartController extends Controller
         if($request->ajax()) {
             return response()->json(['itemTotal' => $itemTotal, 'message' => 'Cart updated successfully']);
         }
+    }
+
+    public function cartform(){
+        $cartItem = session('cart', []);
+        $totalPrice = 0;
+
+        foreach($cartItem as $cart){
+            $totalPrice += $cart['price'] * $cart['qty'];
+        }
+
+        if(session()->get('couponCode')){
+            $coupon = Coupon::where('name', session()->get('couponCode'))->where('status', '1')->first();
+            $couponPrice = $coupon->price ?? 0;
+            $couponCode = $coupon->name ?? '';
+
+            $totalPrice -= $couponPrice;
+        }else{
+            $totalPrice = $totalPrice;
+        }
+
+        session()->put('totalPrice', $totalPrice);
+
+        //return $cartItem;
+        return view('frontend.pages.cartform', compact('cartItem'));
+    }
+
+    function generateKod() {
+        $siparisno = generateOTP(7);
+            if ($this->barcodeKodExists($siparisno)) {
+                return $this->generateKod();
+            }
+
+            return $siparisno;
+        }
+
+        function barcodeKodExists($siparisno) {
+            return Invoice::where('order_no',$siparisno)->exists();
+        }
+
+    public function cartSave(Request $request){
+        // return $request->all();
+
+        $request->validate([
+            'name' => 'required|string|min:3',
+            'email' => 'required|email',
+            'phone' => 'required|string',
+            'company_name' => 'nullable|string',
+            'address' => 'required|string',
+            'country' => 'required|string',
+            'city' => 'required|string',
+            'district' => 'required|string',
+            'zip_code' => 'required|string',
+            'note' => 'nullable|string',
+        ]);
+
+        $invoce = Invoice::create([
+            "user_id"=> auth()->user()->id ?? null,
+            "order_no"=> $this->generateKod(),
+            "country"=> $request->country,
+            "name"=> $request->name,
+            "company_name"=> $request->company_name ?? null,
+            "address"=> $request->address ?? null,
+            "city"=> $request->city ?? null,
+            "district"=> $request->district ?? null,
+            "zip_code"=> $request->zip_code ?? null,
+            "email"=> $request->email ?? null,
+            "phone"=> $request->phone ?? null,
+            "note"=> $request->note ?? null,
+        ]);
+
+        $cart = session()->get('cart') ?? [];
+            foreach ( $cart as $key => $item) {
+                Order::create([
+                    'order_no'=> $invoce->order_no,
+                    'product_id'=>$key,
+                    'name'=>$item['name'],
+                    'price'=>$item['price'],
+                    'qty'=>$item['qty'],
+                ]);
+            }
+
+            session()->forget('cart');
+            return redirect()->route('index')->withSuccess('Shopping Completed Successfully.');
     }
 }
