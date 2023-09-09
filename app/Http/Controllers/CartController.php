@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    public function index(){
-        $cartItem = session('cart', []);
+    public function cartList(){
+        $cartItem = session()->get('cart') ?? [];
         $totalPrice = 0;
 
         foreach($cartItem as $cart){
@@ -21,11 +21,9 @@ class CartController extends Controller
             $totalPrice += $toplamTutar;
         }
 
-        if(session()->get('couponCode')){
+        if(session()->get('couponCode') && $totalPrice != 0){
             $coupon = Coupon::where('name', session()->get('couponCode'))->where('status', '1')->first();
             $couponPrice = $coupon->price ?? 0;
-            $couponCode = $coupon->name ?? '';
-
             $totalPrice -= $couponPrice;
         }else{
             $totalPrice = $totalPrice;
@@ -33,6 +31,15 @@ class CartController extends Controller
 
         session()->put('totalPrice', $totalPrice);
 
+        if(count(session()->get('cart')) == 0){
+            session()->forget('couponCode');
+        }
+
+        return $cartItem;
+    }
+
+    public function index(){
+        $cartItem = $this->cartList();
         //return $cartItem;
         return view('frontend.pages.cart', compact('cartItem'));
     }
@@ -84,30 +91,26 @@ class CartController extends Controller
 
         session(['cart' => $cartItem]);
 
+        if(count(session()->get('cart')) == 0){
+            session()->forget('couponCode');
+        }
+
         return back()->withSuccess('The product has been successfully deleted from the cart.');
     }
 
     public function couponcheck(Request $request){
-        $cartItem = session('cart', []);
-        $totalPrice = 0;
-
-        foreach($cartItem as $cart){
-            $totalPrice += $cart['price'] * $cart['qty'];
-        }
-
         $coupon = Coupon::where('name', $request->coupon_name)->where('status', '1')->first();
-        $couponPrice = $coupon->price ?? 0;
-        $couponCode = $coupon->name ?? '';
-
-        $totalPrice -= $couponPrice;
-
-        session()->put('totalPrice', $totalPrice);
-        session()->put('couponCode', $couponCode);
-        session()->put('couponPrice', $couponPrice);
 
         if(empty($coupon)){
             return back()->withError('Coupon not found.');
         }
+        $couponCode = $coupon->name ?? '';
+        session()->put('couponCode', $couponCode);
+
+        $couponPrice = $coupon->price ?? 0;
+        session()->put('couponPrice', $couponPrice);
+
+        $this->cartList();
 
         return back()->withSuccess('Coupon applied successfully.');
     }
@@ -137,25 +140,7 @@ class CartController extends Controller
 
         session(['cart'=>$cartItem]);
 
-        $cartItem = session('cart');
-        $totalPrice = 0;
-
-        if(session()->get('couponCode')){
-            $coupon = Coupon::where('name', session()->get('couponCode'))->where('status', '1')->first();
-            $couponPrice = $coupon->price ?? 0;
-
-            $totalPrice -= $couponPrice;
-        }else{
-            $totalPrice = $totalPrice;
-        }
-
-        foreach($cartItem as $cart){
-            $kdvOrani = $cart['kdv'] ?? 0;
-            $kdvTutar = ($cart['price'] * $cart['qty']) * ($kdvOrani / 100);
-            $toplamTutar = $cart['price'] * $cart['qty'] + $kdvTutar;
-            $totalPrice += $toplamTutar;
-        }
-        session()->put('totalPrice', $totalPrice);
+        $this->cartList();
 
         if($request->ajax()) {
             return response()->json(['itemTotal' => $itemTotal, 'totalPrice' => session()->get('totalPrice'), 'message' => 'Cart updated successfully']);
@@ -163,25 +148,7 @@ class CartController extends Controller
     }
 
     public function cartform(){
-        $cartItem = session('cart', []);
-        $totalPrice = 0;
-
-        foreach($cartItem as $cart){
-            $totalPrice += $cart['price'] * $cart['qty'];
-        }
-
-        if(session()->get('couponCode')){
-            $coupon = Coupon::where('name', session()->get('couponCode'))->where('status', '1')->first();
-            $couponPrice = $coupon->price ?? 0;
-            $couponCode = $coupon->name ?? '';
-
-            $totalPrice -= $couponPrice;
-        }else{
-            $totalPrice = $totalPrice;
-        }
-
-        session()->put('totalPrice', $totalPrice);
-
+        $cartItem = $this->cartList();
         //return $cartItem;
         return view('frontend.pages.cartform', compact('cartItem'));
     }
@@ -193,7 +160,7 @@ class CartController extends Controller
             }
 
             return $siparisno;
-        }
+    }
 
         function barcodeKodExists($siparisno) {
             return Invoice::where('order_no',$siparisno)->exists();
