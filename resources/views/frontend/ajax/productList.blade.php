@@ -13,9 +13,15 @@
                     <p class="text-primary font-weight-bold">
                         ${{ number_format($product->price, 0) }}</p>
 
-                    <form method="POST" action="{{ route('cartadd') }}">
+                    @php
+                        $sifrele = sifrele($product->id);
+                    @endphp
+
+                    {{-- {{ sifrelecoz($sifrele) }} --}}
+
+                    <form id="addForm" method="POST">
                         @csrf
-                        <input type="hidden" name="product_id" value={{ $product->id }}>
+                        <input type="hidden" name="product_id" value={{ $sifrele }}>
                         <input type="hidden" name="size" value={{ $product->size }}>
                         <p><button type="submit" class="buy-now btn btn-sm btn-primary">Add To
                                 Cart</button>

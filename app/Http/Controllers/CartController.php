@@ -45,7 +45,7 @@ class CartController extends Controller
     }
 
     public function add(Request $request){
-        $productID = $request->product_id;
+        $productID = sifrelecoz($request->product_id);
         $qty = $request->qty ?? 1;
         $size = $request->size;
 
@@ -73,7 +73,7 @@ class CartController extends Controller
         session(['cart' => $cartItem]);
 
         if($request->ajax()){
-            return response()->json(['Cart updated successfully']);
+            return response()->json(['sepetCount'=>count(session()->get('cart')), 'message'=>'Product successfully added to cart!']);
         }
 
         return back()->withSuccess('Product successfully added to cart.');
