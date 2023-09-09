@@ -19,6 +19,8 @@
 
     <link rel="stylesheet" href="{{ asset('/') }}css/style.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 </head>
@@ -42,6 +44,23 @@
     <script src="{{ asset('/') }}js/aos.js"></script>
     @yield('customjs')
     <script src="{{ asset('/') }}js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        @if (session()->get('success'))
+            toastr.success("{{ session()->get('success') }}")
+        @endif
+
+        @if (session()->get('error'))
+            toastr.error("{{ session()->get('error') }}")
+        @endif
+
+        @if (count($errors))
+            @foreach ($errors->all() as $error)
+                toastr.error("{{ $error }}")
+            @endforeach
+        @endif
+    </script>
 
 </body>
 
