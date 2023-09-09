@@ -82,7 +82,7 @@ class CartController extends Controller
     public function remove(Request $request){
         // return $request->all();
 
-        $productID = $request->product_id;
+        $productID = sifrelecoz($request->product_id);
         $cartItem = session('cart', []);
 
         if(array_key_exists($productID, $cartItem)){
@@ -93,6 +93,10 @@ class CartController extends Controller
 
         if(count(session()->get('cart')) == 0){
             session()->forget('couponCode');
+        }
+
+        if($request->ajax()) {
+            return response()->json(['sepetCount'=>count(session()->get('cart')), 'message'=>'The product has been successfully deleted from the cart!']);
         }
 
         return back()->withSuccess('The product has been successfully deleted from the cart.');

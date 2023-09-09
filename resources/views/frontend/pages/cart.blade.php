@@ -71,15 +71,19 @@
                                             $price = $cart['price'];
                                             $qty = $cart['qty'];
 
-                                            $kdvTutar = ($price * $qty) * ($kdvOrani / 100);
+                                            $kdvTutar = $price * $qty * ($kdvOrani / 100);
                                             $toplamTutar = $price * $qty + $kdvTutar;
                                         @endphp
 
                                         <td class="itemTotal">$ {{ $toplamTutar }}</td>
                                         <td>
-                                            <form action="{{ route('cartremove') }}" method="POST">
+                                            <form class="removeItem" method="POST">
                                                 @csrf
-                                                <input type="text" hidden name="product_id" value="{{ $key }}">
+                                                @php
+                                                    $sifrele = sifrele($key);
+                                                @endphp
+
+                                                <input type="hidden" name="product_id" value="{{ $sifrele }}">
                                                 <button type="submit" class="btn btn-primary btn-sm">X</button>
                                             </form>
                                         </td>
@@ -134,7 +138,8 @@
                                     <span class="text-black">Total</span>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <strong class="newTotalPrice text-black">$ {{session()->get('totalPrice') ?? ''}}</strong>
+                                    <strong class="newTotalPrice text-black">$
+                                        {{ session()->get('totalPrice') ?? '' }}</strong>
                                 </div>
                             </div>
 
@@ -197,5 +202,25 @@
                 }
             });
         }
+
+        $(document).on('click', '.removeItem', function(e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+            var item = $(this);
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                type: "POST",
+                url: "{{ route('cartremove') }}",
+                data: formData,
+                success: function(response) {
+                    toastr.success(response.message);
+                    $('.count').text(response.sepetCount);
+                    item.closest('.orderItem').remove();
+                }
+            });
+
+        });
     </script>
 @endsection
