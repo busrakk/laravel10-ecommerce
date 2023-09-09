@@ -11,12 +11,25 @@ use App\Models\Category;
 class PageController extends Controller
 {
     public function contact(){
-        return view('frontend.pages.contact');
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Contact'
+        ];
+
+        return view('frontend.pages.contact', compact('breadcrumb'));
     }
 
     public function about(){
         $about = About::where("id",1)->first();
-        return view('frontend.pages.about', compact("about"));
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'About'
+        ];
+        return view('frontend.pages.about', compact("about", 'breadcrumb'));
     }
 
     public function product(Request $request, $slug=null){
@@ -40,6 +53,39 @@ class PageController extends Controller
 
         $order = $request->order ?? 'id';
         $sort = $request->sort ?? 'desc';
+
+
+        $anaKategori = null;
+        $altKategori = null;
+        if(!empty($category) && empty($slug)) {
+            $anaKategori = Category::where('slug',$category)->first();
+        }else if (!empty($category) && !empty($slug)){
+            $anaKategori = Category::where('slug',$category)->first();
+            $altKategori = Category::where('slug',$slug)->first();
+        }
+
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Products'
+        ];
+
+        if(!empty($anaKategori) && empty($altKategori)) {
+            $breadcrumb['active'] = $anaKategori->name;
+        }
+
+        if(!empty($altKategori)) {
+            $breadcrumb['pages'][] = [
+                'link'=> route($anaKategori->slug.'product'),
+                'name' => $anaKategori->name
+            ];
+
+            $breadcrumb['active'] = $altKategori->name;
+        }
+
+        // return $breadcrumb;
+
 
         $products = Product::where("status","1")
         ->select(['id','name', 'slug', 'size', 'color', 'price', 'category_id', 'image'])
@@ -86,11 +132,18 @@ class PageController extends Controller
 
         $maxPrice = Product::max('price');
 
-        return view('frontend.pages.products', compact('products' , 'maxPrice', 'sizeLists', 'colors'));
+        return view('frontend.pages.products', compact('breadcrumb', 'products' , 'maxPrice', 'sizeLists', 'colors'));
     }
 
     public function saleproduct(){
-        return view('frontend.pages.products');
+        $breadcrumb = [
+            'pages' => [
+
+            ],
+            'active'=> 'Discounted Products'
+        ];
+
+        return view('frontend.pages.products', compact('breadcrumb'));
     }
 
     public function productdetail($slug){
@@ -104,7 +157,23 @@ class PageController extends Controller
         ->orderBy('id', 'desc')
         ->get();
 
-        return view('frontend.pages.product', compact('product', 'products'));
+        $category = Category::where('id',$product->category_id)->first();
+
+            $breadcrumb = [
+                'pages' => [
+
+                ],
+                'active'=>  $product->name
+            ];
+
+            if(!empty($category)) {
+                $breadcrumb['pages'][] = [
+                    'link'=> route($category->slug.'product'),
+                    'name' => $category->name
+                ];
+            }
+
+        return view('frontend.pages.product', compact('breadcrumb', 'product', 'products'));
     }
 
 }
