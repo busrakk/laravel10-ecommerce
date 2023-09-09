@@ -7,10 +7,11 @@ use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\ProductController;
 
 Route::group(['middleware' => ['panelsetting', 'auth'], 'prefix'=>'panel', 'as'=>'panel.'], function(){
-    Route::get('/', [DashboardController::class, 'index'])->name('panel');
+    Route::get('/', [DashboardController::class,'index'])->name('index');
     // slider route
     Route::get('/slider', [SliderController::class, 'index'])->name('slider.index');
     Route::get('/slider/add', [SliderController::class, 'create'])->name('slider.create');
@@ -46,4 +47,10 @@ Route::group(['middleware' => ['panelsetting', 'auth'], 'prefix'=>'panel', 'as'=
     Route::resource('/product', ProductController::class)->except('destroy');
     Route::delete('/product/destroy', [ProductController::class, 'destroy'])->name('product.destroy');
     Route::post('/product-status/update', [ProductController::class, 'status'])->name('product.status');
+    // order route
+    Route::get('/order', [OrderController::class, 'index'])->name('order.index');
+    Route::get('/order/{id}/edit', [OrderController::class, 'edit'])->name('order.edit');
+    Route::put('/order/{id}/update', [OrderController::class, 'update'])->name('order.update');
+    Route::delete('/order/destroy', [OrderController::class, 'destroy'])->name('order.destroy');
+    Route::post('/order-status/update', [OrderController::class, 'status'])->name('order.status');
 });

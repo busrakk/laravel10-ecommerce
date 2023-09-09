@@ -1,7 +1,7 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="{{ route('panel.index') }}">
                 <i class="icon-grid menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
             </a>
@@ -37,16 +37,14 @@
             </div>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic2" aria-expanded="false" aria-controls="ui-basic2">
+            <a class="nav-link" data-toggle="collapse" href="#ui-basic3" aria-expanded="false" aria-controls="ui-basic3">
                 <i class="icon-layout menu-icon"></i>
-                <span class="menu-title">Products</span>
+                <span class="menu-title">Orders</span>
                 <i class="menu-arrow"></i>
             </a>
-            <div class="collapse" id="ui-basic2">
+            <div class="collapse" id="ui-basic3">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('panel.product.index') }}">Products</a>
-                    </li>
-                    <li class="nav-item"> <a class="nav-link" href="{{ route('panel.product.create') }}">Add Product</a>
+                    <li class="nav-item"> <a class="nav-link" href="{{ route('panel.order.index') }}">Orders</a>
                     </li>
                 </ul>
             </div>

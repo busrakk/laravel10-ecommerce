@@ -19,6 +19,11 @@ class Invoice extends Model
         'city',
         'district',
         'zip_code',
-        'note'
+        'note',
+        'status',
     ];
+
+    public function orders(){
+        return $this->hasMany(Order::class, 'order_no', 'order_no');
+    }
 }
