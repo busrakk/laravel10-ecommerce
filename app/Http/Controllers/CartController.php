@@ -15,7 +15,10 @@ class CartController extends Controller
         $totalPrice = 0;
 
         foreach($cartItem as $cart){
-            $totalPrice += $cart['price'] * $cart['qty'];
+            $kdvOrani = $cart['kdv'] ?? 0;
+            $kdvTutar = ($cart['price'] * $cart['qty']) * ($kdvOrani / 100);
+            $toplamTutar = $cart['price'] * $cart['qty'] + $kdvTutar;
+            $totalPrice += $toplamTutar;
         }
 
         if(session()->get('couponCode')){
@@ -55,6 +58,7 @@ class CartController extends Controller
                 'name' => $product->name,
                 'price' => $product->price,
                 'qty' => $qty,
+                'kdv' => $product->kdv,
                 'size' => $size
             ];
         }
@@ -125,13 +129,36 @@ class CartController extends Controller
             if($qty == 0 || $qty < 0){
                 unset($cartItem[$productID]);
             }
-            $itemTotal = $product->price * $qty;
+            // $itemTotal = $product->price * $qty;
+            $kdvOraniItem = $product->kdv ?? 0;
+            $kdvTutarItem = ($product->price * $qty) * ($kdvOraniItem / 100);
+            $itemTotal = $product->price * $qty + $kdvTutarItem;
         }
 
         session(['cart'=>$cartItem]);
 
+        $cartItem = session('cart');
+        $totalPrice = 0;
+
+        if(session()->get('couponCode')){
+            $coupon = Coupon::where('name', session()->get('couponCode'))->where('status', '1')->first();
+            $couponPrice = $coupon->price ?? 0;
+
+            $totalPrice -= $couponPrice;
+        }else{
+            $totalPrice = $totalPrice;
+        }
+
+        foreach($cartItem as $cart){
+            $kdvOrani = $cart['kdv'] ?? 0;
+            $kdvTutar = ($cart['price'] * $cart['qty']) * ($kdvOrani / 100);
+            $toplamTutar = $cart['price'] * $cart['qty'] + $kdvTutar;
+            $totalPrice += $toplamTutar;
+        }
+        session()->put('totalPrice', $totalPrice);
+
         if($request->ajax()) {
-            return response()->json(['itemTotal' => $itemTotal, 'message' => 'Cart updated successfully']);
+            return response()->json(['itemTotal' => $itemTotal, 'totalPrice' => session()->get('totalPrice'), 'message' => 'Cart updated successfully']);
         }
     }
 
@@ -211,6 +238,7 @@ class CartController extends Controller
                     'name'=>$item['name'],
                     'price'=>$item['price'],
                     'qty'=>$item['qty'],
+                    'kdvd'=>$item['kdv'],
                 ]);
             }
 

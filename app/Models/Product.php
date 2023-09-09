@@ -19,6 +19,7 @@ class Product extends Model
         'size',
         'color',
         'qty',
+        'kdv',
         'status',
         'content',
     ];

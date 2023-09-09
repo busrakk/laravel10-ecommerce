@@ -146,10 +146,19 @@
 
                                             @if (session()->get('cart'))
                                                 @foreach (session()->get('cart') as $key => $cart)
+                                                    @php
+                                                        $kdvOrani = $cart['kdv'] ?? 0;
+                                                        $price = $cart['price'];
+                                                        $qty = $cart['qty'];
+
+                                                        $kdvTutar = $price * $qty * ($kdvOrani / 100);
+                                                        $toplamTutar = $price * $qty + $kdvTutar;
+                                                    @endphp
+
                                                     <tr>
                                                         <td>{{ $cart['name'] }} <strong class="mx-2">x</strong>
                                                             {{ $cart['qty'] }}</td>
-                                                        <td>$ {{ $cart['price'] * $cart['qty'] }}</td>
+                                                        <td>$ {{ $toplamTutar }}</td>
                                                     </tr>
                                                 @endforeach
                                             @endif

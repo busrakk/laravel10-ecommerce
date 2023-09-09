@@ -65,7 +65,17 @@
                                             </div>
 
                                         </td>
-                                        <td class="itemTotal">$ {{ $cart['price'] * $cart['qty'] }}</td>
+
+                                        @php
+                                            $kdvOrani = $cart['kdv'] ?? 0;
+                                            $price = $cart['price'];
+                                            $qty = $cart['qty'];
+
+                                            $kdvTutar = ($price * $qty) * ($kdvOrani / 100);
+                                            $toplamTutar = $price * $qty + $kdvTutar;
+                                        @endphp
+
+                                        <td class="itemTotal">$ {{ $toplamTutar }}</td>
                                         <td>
                                             <form action="{{ route('cartremove') }}" method="POST">
                                                 @csrf
@@ -124,7 +134,7 @@
                                     <span class="text-black">Total</span>
                                 </div>
                                 <div class="col-md-6 text-right">
-                                    <strong class="text-black">$ {{session()->get('totalPrice') ?? ''}}</strong>
+                                    <strong class="newTotalPrice text-black">$ {{session()->get('totalPrice') ?? ''}}</strong>
                                 </div>
                             </div>
 
